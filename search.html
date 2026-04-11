@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Search - MedFinder</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #60a5fa;
+            --text-light: #f8fafc;
+            --box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f9ff;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+      background-color: rgba(44, 62, 80, 0.95) !important;
+      padding: 0.75rem 2rem;
+      height: 70px;
+    }
+
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent-color) !important;
+      margin-right: 3rem;
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-link {
+      font-size: 1.1rem;
+      padding: 0.5rem 1rem !important;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    @media (max-width: 991px) {
+      .navbar-collapse {
+        background-color: rgba(44, 62, 80, 0.98);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      
+      .navbar-nav {
+        gap: 0.5rem;
+      }
+    }
+        /* Search Section Styling */
+        .search {
+            margin-top: 50px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(30, 64, 175, 0.1)),
+                        url('/api/placeholder/1920/1080') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .search-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--box-shadow);
+            max-width: 650px;
+            width: 100%;
+            animation: slideUp 0.8s ease-out;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .search-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .search-header h2 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #1e40af;
+        }
+
+        .search-header p {
+            color: #60a5fa;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            background-color: white;
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        /* Button Styling */
+        .btn {
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            border: none;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gradient);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Footer Styling */
+        footer {
+            background: var(--gradient);
+            color: var(--text-light);
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Icons and Decorations */
+        .icon {
+            color: var(--primary-color);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="#">MedFinder</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+              <li class="nav-item"><a class="nav-link active" href="search.html">Search</a></li>
+              <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+              <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <div class="search">
+        <div class="search-container">
+            <div class="search-header">
+                <h2>Find Your Medicine</h2>
+                <p>Quick and easy way to locate medicines in pharmacies near you</p>
+            </div>
+            
+            <form id="searchForm" onsubmit="searchMedicine(event)">
+                <div class="form-group">
+                    <label for="medicineName" class="form-label">
+                        <i class="fas fa-pills icon"></i>
+                        Medicine Name
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="medicines" 
+                        placeholder="Enter the name of the medicine"
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="district" class="form-label">
+                        <i class="fas fa-map-marker-alt icon"></i>
+                        District
+                    </label>
+                    <select class="form-select" id="district" required onchange="updateLocalities()">
+                        <option value="">Select your district</option>
+                        <option value="thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="kollam">Kollam</option>
+                        <option value="pathanamthitta">Pathanamthitta</option>
+                        <option value="alappuzha">Alappuzha</option>
+                        <option value="kottayam">Kottayam</option>
+                        <option value="idukki">Idukki</option>
+                        <option value="ernakulam">Ernakulam</option>
+                        <option value="thrissur">Thrissur</option>
+                        <option value="palakkad">Palakkad</option>
+                        <option value="malappuram">Malappuram</option>
+                        <option value="kozhikode">Kozhikode</option>
+                        <option value="wayanad">Wayanad</option>
+                        <option value="kannur">Kannur</option>
+                        <option value="kasaragod">Kasaragod</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="locality" class="form-label">
+                        <i class="fas fa-location-dot icon"></i>
+                        Locality
+                    </label>
+                    <select class="form-select" id="locality" required>
+                        <option value="">First select a district</option>
+                    </select>
+                </div>
+                
+                <div class="d-grid gap-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>
+                        Search Medicines
+                    </button>
+                    <a href="welcome2.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 MedFinder | All Rights Reserved | <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Previous localities data remains the same
+        const localities = {
+            thiruvananthapuram: ['Kazhakoottam', 'Sasthamangalam', 'Vattiyoorkavu', 'Peroorkada', 'Kesavadasapuram', 'Pattom'],
+            kollam: ['Chinnakada', 'Kadappakada', 'Tangasseri', 'Kottiyam', 'Eravipuram'],
+            pathanamthitta: ['Adoor', 'Konni', 'Ranni', 'Pandalam', 'Thiruvalla'],
+            alappuzha: ['Ambalappuzha', 'Cherthala', 'Haripad', 'Kayamkulam', 'Mavelikkara'],
+            kottayam: ['Changanassery', 'Pala', 'Vaikom', 'Ettumanoor', 'Erattupetta'],
+            idukki: ['Thodupuzha', 'Munnar', 'Adimali', 'Kumily', 'Kattappana'],
+            ernakulam: ['Aluva', 'Edappally', 'Kakkanad', 'Kaloor', 'Palarivattom', 'Vytilla'],
+            thrissur: ['Aranattukara', 'Kodungallur', 'Kunnamkulam', 'Guruvayur', 'Chalakudy'],
+            palakkad: ['Ottapalam', 'Mannarkkad', 'Chittur', 'Pattambi', 'Alathur'],
+            malappuram: ['Manjeri', 'Tirur', 'Ponnani', 'Perinthalmanna', 'Kondotty'],
+            kozhikode: ['Mavoor', 'Beypore', 'Kunnamangalam', 'Feroke', 'Balussery'],
+            wayanad: ['Kalpetta', 'Mananthavady', 'Sulthan Bathery', 'Meenangadi'],
+            kannur: ['Thalassery', 'Payyanur', 'Mattannur', 'Iritty', 'Kathirur'],
+            kasaragod: ['Nileshwar', 'Kanhangad', 'Cheruvathur', 'Uppala', 'Manjeshwar']
+        };
+
+        function updateLocalities() {
+            const districtSelect = document.getElementById('district');
+            const localitySelect = document.getElementById('locality');
+            const selectedDistrict = districtSelect.value;
+
+            localitySelect.innerHTML = '<option value="">Select your locality</option>';
+
+            if (selectedDistrict && localities[selectedDistrict]) {
+                localities[selectedDistrict].forEach(locality => {
+                    const option = document.createElement('option');
+                    option.value = locality.toLowerCase();
+                    option.textContent = locality;
+                    localitySelect.appendChild(option);
+                });
+            }
+        }
+
+    async function searchMedicine(event) {
+    event.preventDefault();
+    
+    // Show loading spinner
+    document.querySelector('.loading').style.display = 'flex';
+    
+    const medicineName = document.getElementById('medicines').value;
+    const district = document.getElementById('district').value;
+    const locality = document.getElementById('locality').value;
+    
+    try {
+        const response = await fetch('http://localhost:5000/api/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                medicineName, 
+                district,
+                locality,
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Store both search parameters and results
+        localStorage.setItem('searchMedicine', medicineName);
+        localStorage.setItem('searchDistrict', district);
+        localStorage.setItem('searchLocality', locality);
+        
+        if (data.success && data.stores) {
+            localStorage.setItem('searchResults', JSON.stringify(data.stores));
+            console.log('Stored results:', data.stores); // Debug log
+            window.location.href = 'results-html.html';
+        } else {
+            // If no results found or success is false
+            localStorage.setItem('searchResults', JSON.stringify([]));
+            window.location.href = 'results-html.html';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while searching. Please try again.');
+    } finally {
+        // Hide loading spinner
+        document.querySelector('.loading').style.display = 'none';
+    }
+    }
+
+    </script>
+</body>
+</html>

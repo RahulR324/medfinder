@@ -1,0 +1,84 @@
+{
+  "stores": [
+    {
+      "name": "MedPlus Pharmacy",
+      "address": "Shop #42, Kazhakoottam Main Road, Kazhakoottam",
+      "district": "thiruvananthapuram",
+      "locality": "kazhakoottam",
+      "phone": "+91 9876543210",
+      "latitude": 8.5658506,
+      "longitude": 76.9062073,
+      "medicines": {
+        "Paracetamol": 35.50,
+        "Dolo 650": 40.00,
+        "Crocin": 30.50,
+        "Azithromycin": 80.00,
+        "Cetirizine": 25.00
+      },
+      "availability": true,
+      "mapIframe": "https://www.google.com/maps/embed?...",
+      "openingHours": "8:00 AM - 10:00 PM",
+      "rating": 4.2
+    },
+    {
+      "name": "Apollo Pharmacy",
+      "address": "Technopark Road, Kazhakoottam",
+      "district": "thiruvananthapuram",
+      "locality": "kazhakoottam",
+      "phone": "+91 9876543211",
+      "latitude": 8.5602841,
+      "longitude": 76.9081234,
+      "medicines": {
+        "Paracetamol": 38.00,
+        "Limcee": 28.50,
+        "Montair": 75.00,
+        "Allegra": 90.00,
+        "Pantoprazole": 55.00
+      },
+      "availability": true,
+      "mapIframe": "https://www.google.com/maps/embed?...",
+      "openingHours": "9:00 AM - 11:00 PM",
+      "rating": 4.5
+    },
+    {
+      "name": "Wellness Forever",
+      "address": "Pattom Palace Road, Pattom",
+      "district": "thiruvananthapuram",
+      "locality": "pattom",
+      "phone": "+91 9876543212",
+      "latitude": 8.5123453,
+      "longitude": 76.945123,
+      "medicines": {
+        "Metformin": 50.00,
+        "Thyronorm": 60.00,
+        "Allegra": 85.00,
+        "Aspirin": 20.00,
+        "Azithromycin": 95.00
+      },
+      "availability": true,
+      "mapIframe": "https://www.google.com/maps/embed?...",
+      "openingHours": "8:00 AM - 9:00 PM",
+      "rating": 4.0
+    },
+    {
+      "name": "M A Medicals",
+      "address": "Cheroopa, Road, Kuttikkadavu, Kozhikode, Kerala 673001",
+      "district": "kozhikode",
+      "locality": "mavoor",
+      "phone": "+91 8848789625",
+      "latitude": 11.263891987307407,
+      "longitude": 75.92597698076526,
+      "medicines": {
+        "Metformin": 50.00,
+        "Thyronorm": 60.00,
+        "Allegra": 85.00,
+        "Aspirin": 20.00,
+        "Azithromycin": 95.00
+      },
+      "availability": true,
+      "mapIframe": "https://maps.app.goo.gl/VQubWzDXz1YQK2pc8",
+      "openingHours": "8:00 AM - 9:00 PM",
+      "rating": 4.0
+    }
+  ]
+}

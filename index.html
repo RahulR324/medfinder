@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="assets/logo.png">
+  <title>MedFinder - Find Medicines Near You</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root {
+      --primary-color: #2C3E50;
+      --accent-color: #3498DB;
+      --text-light: #ECF0F1;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Updated Navbar Styling */
+    .navbar {
+      background-color: rgba(44, 62, 80, 0.95) !important;
+      padding: 0.75rem 2rem;
+      height: 70px;
+    }
+
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent-color) !important;
+      margin-right: 3rem;
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-link {
+      font-size: 1.1rem;
+      padding: 0.5rem 1rem !important;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    @media (max-width: 991px) {
+      .navbar-collapse {
+        background-color: rgba(44, 62, 80, 0.98);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      
+      .navbar-nav {
+        gap: 0.5rem;
+      }
+    }
+
+    /* Rest of the styles remain the same */
+ 
+    .welcome {
+      min-height: 100vh;
+      background-image: url('assets/medpic.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    /* Add an overlay for better text readability */
+    .welcome::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    .welcome .content {
+      position: relative;
+      z-index: 2;
+    }
+    .content {
+      max-width: 800px;
+    }
+
+    .med-finder-title {
+      font-size: 4.5rem;
+      font-weight: 800;
+      color: var(--text-light);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1.5rem;
+    }
+
+    .lead {
+      font-size: 1.5rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .btn-custom {
+      padding: 1rem 2.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-light);
+      background-color: var(--accent-color);
+      border: none;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-custom:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+      background-color: #2980b9;
+    }
+
+    .features {
+      padding: 5rem 0;
+      background-color: #f8f9fa;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+    }
+
+    footer {
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      padding: 1.5rem 0;
+      position: relative;
+    }
+
+    footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #2980b9;
+      text-decoration: none;
+    }
+
+    .animate-fade-up {
+      animation: fadeUp 1s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Updated Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">MedFinder</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="search.html">Search</a></li>
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Rest of the content remains the same -->
+  <div class="welcome">
+    <div class="content">
+      <h1 class="med-finder-title animate-fade-up">MED FINDER</h1>
+      <p class="lead animate-fade-up">Locate the medicines you need instantly. Connect with nearby pharmacies and check real-time availability.</p>
+      <a href="search.html" class="btn btn-custom animate-fade-up">Find Medicines Now</a>
+    </div>
+  </div>
+
+  <section class="features" id="features">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Quick Search</h3>
+            <p>Find medicines in your locality within seconds using our advanced search system.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">📍</div>
+            <h3>Real-time Location</h3>
+            <p>Get accurate directions to the nearest pharmacy with available stock.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Live Availability</h3>
+            <p>Check medicine availability and prices in real-time across multiple stores.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 text-center text-md-start">
+          <p>&copy; 2025 MedFinder | All Rights Reserved</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <a href="privacy.html" class="me-3">Privacy Policy</a>
+          <a href="#contact">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

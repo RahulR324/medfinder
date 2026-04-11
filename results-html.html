@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - MedFinder</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mongodb/4.13.0/mongodb.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2C3E50;
+            --accent-color: #3498DB;
+            --text-light: #ECF0F1;
+            --secondary-color: #1e40af;
+            --box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f9ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+      background-color: rgba(44, 62, 80, 0.95) !important;
+      padding: 0.75rem 2rem;
+      height: 70px;
+    }
+
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent-color) !important;
+      margin-right: 3rem;
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-link {
+      font-size: 1.1rem;
+      padding: 0.5rem 1rem !important;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    @media (max-width: 991px) {
+      .navbar-collapse {
+        background-color: rgba(44, 62, 80, 0.98);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      
+      .navbar-nav {
+        gap: 0.5rem;
+      }
+    }
+
+        /* Results Section Styling */
+        .results-section {
+            padding: 3rem 1.5rem;
+            flex-grow: 1;
+            margin-top: 50px;
+        }
+
+        .search-summary {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .search-summary h2 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .search-summary p {
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .search-summary strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .badge-pill {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .store-info {
+            padding: 1.5rem;
+        }
+
+        .store-name {
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .store-address {
+            color: #64748b;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .store-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            color: #475569;
+            font-size: 0.95rem;
+            gap: 0.5rem;
+        }
+
+        .detail-icon {
+            color: var(--primary-color);
+        }
+
+        .price-availability {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .price {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .availability {
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+        }
+
+        .available {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .unavailable {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .map-container {
+            height: 200px;
+            width: 100%;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .map-link {
+            text-decoration: none;
+        }
+
+        .map-link:hover {
+            background-color: #e2e8f0 !important;
+            transition: background-color 0.3s ease;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-action {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            border: none;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .rating-stars {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .star {
+            color: #fbbf24;
+        }
+
+        .rating-text {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .no-results {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+        }
+
+        .no-results h3 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .no-results p {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Footer Styling */
+        footer {
+            background: var(--gradient);
+            color: var(--text-light);
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .store-details {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .price-availability {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="index.html">MedFinder</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item"><a class="nav-link active" href="welcome2.html">Home</a></li>
+              <li class="nav-item"><a class="nav-link active" href="search.html">Search</a></li>
+              <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+              <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <div class="results-section container">
+        <div id="searchSummary" class="search-summary animate__animated animate__fadeIn">
+            <!-- Search summary will be populated via JavaScript -->
+        </div>
+        
+        <div id="resultsContainer" class="row">
+            <!-- Results will be populated via JavaScript -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 MedFinder | All Rights Reserved | <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mongodb-stitch-browser-sdk/4.8.0/bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get search parameters from localStorage
+            const medicines = localStorage.getItem('searchMedicine');
+            const district = localStorage.getItem('searchDistrict');
+            const locality = localStorage.getItem('searchLocality');
+            
+            // Update search summary
+            const searchSummaryEl = document.getElementById('searchSummary');
+            
+            // Format district and locality for display (capitalize first letter)
+            const formattedDistrict = district ? district.charAt(0).toUpperCase() + district.slice(1) : '';
+            const formattedLocality = locality ? locality.charAt(0).toUpperCase() + locality.slice(1) : '';
+            
+            searchSummaryEl.innerHTML = `
+                <h2>Search Results</h2>
+                <p>Medicine: <strong>${medicines || 'Not specified'}</strong></p>
+                <p>Location: <strong>${formattedLocality}, ${formattedDistrict}</strong></p>
+                <div id="resultsCount" class="mb-2">Loading results...</div>
+                <div class="mt-3">
+                    <span class="badge bg-primary badge-pill">
+                        <i class="fas fa-pills me-1"></i> ${medicines}
+                    </span>
+                    <span class="badge bg-secondary badge-pill">
+                        <i class="fas fa-location-dot me-1"></i> ${formattedLocality}
+                    </span>
+                </div>
+            `;
+            
+            // Connect to MongoDB and fetch results
+            connectToMongoDB(medicines, district, locality);
+        });
+
+        // Function to search pharmacies using our API
+        async function connectToMongoDB(medicines, district, locality) {
+            try {
+                // Call our Node.js API
+                const response = await fetch('http://localhost:5000/api/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        medicines: medicines,
+                        district: district,
+                        locality: locality
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Update the results count
+                if (data.success) {
+                    document.getElementById('resultsCount').innerHTML = `<p>${data.message}</p>`;
+                    // Render the results
+                    renderResults(data.stores);
+                } else {
+                    throw new Error(data.message || 'Failed to fetch results');
+                }
+                
+            } catch (error) {
+                console.error('Error connecting to MongoDB:', error);
+                document.getElementById('resultsCount').innerHTML = `<p>Error: <strong>Failed to fetch results</strong></p>`;
+                
+                // Display error message
+                const resultsContainerEl = document.getElementById('resultsContainer');
+                resultsContainerEl.innerHTML = `
+                    <div class="no-results animate__animated animate__fadeIn">
+                        <div class="no-results-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3>Error Loading Data</h3>
+                        <p>There was a problem connecting to the database. Please try again later.</p>
+                        <a href="search.html" class="btn btn-primary btn-action">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Search
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Function to render results
+        function renderResults(stores) {
+            const resultsContainerEl = document.getElementById('resultsContainer');
+            
+            if (stores.length > 0) {
+                resultsContainerEl.innerHTML = ''; // Clear any existing content
+                
+                stores.forEach((store) => {
+                    // Generate star rating
+                    let starsHtml = '';
+                    const rating = store.rating || 0;
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= Math.floor(rating)) {
+                            starsHtml += '<i class="fas fa-star star"></i>';
+                        } else if (i - 0.5 <= rating) {
+                            starsHtml += '<i class="fas fa-star-half-alt star"></i>';
+                        } else {
+                            starsHtml += '<i class="far fa-star star"></i>';
+                        }
+                    }
+                    
+                    const availabilityClass = store.availability ? 'available' : 'unavailable';
+                    const availabilityText = store.availability ? 'In Stock' : 'Out of Stock';
+                    
+                    // Simple map link with icon
+                    const mapHtml = store.latitude && store.longitude
+                        ? `<div class="map-container">
+                            <a href="https://www.openstreetmap.org/?mlat=${store.latitude}&mlon=${store.longitude}&zoom=15" 
+                               target="_blank" 
+                               class="map-link d-flex justify-content-center align-items-center h-100 bg-light text-primary text-decoration-none">
+                                <div class="text-center">
+                                    <i class="fas fa-map-marked-alt fa-3x mb-2"></i>
+                                    <div>Click to View Map</div>
+                                </div>
+                            </a>
+                           </div>`
+                        : `<div class="map-container">
+                            <div class="d-flex justify-content-center align-items-center h-100 bg-light text-muted">
+                                <i class="fas fa-map-marker-alt me-2"></i> Map not available
+                            </div>
+                           </div>`;
+                    
+                    const resultHtml = `
+                        <div class="col-lg-6 animate__animated animate__fadeIn">
+                            <div class="result-card">
+                                <div class="store-info">
+                                    <h3 class="store-name">${store.name}</h3>
+                                    <p class="store-address">
+                                        <i class="fas fa-location-dot me-2 detail-icon"></i>
+                                        ${store.address}
+                                    </p>
+                                    
+                                    <div class="rating-stars">
+                                        ${starsHtml}
+                                        <span class="rating-text">(${rating.toFixed(1)})</span>
+                                    </div>
+                                    
+                                    <div class="store-details">
+                                        <div class="detail-item">
+                                            <i class="fas fa-clock detail-icon"></i>
+                                            Open: ${store.openingHours || 'Not available'}
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-phone detail-icon"></i>
+                                            ${store.phone || 'Not available'}
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-pills detail-icon"></i>
+                                            ${store.medicines.join(', ')}
+                                        </div>
+                                    </div>
+                                    
+                                    ${mapHtml}
+                                    
+                                    <div class="actions">
+                                        <a href="tel:${store.phone}" class="btn btn-primary btn-action">
+                                            <i class="fas fa-phone-alt me-2"></i> Call
+                                        </a>
+                                        <button class="btn btn-outline-primary btn-action" onclick="showDirections('${store.name}', ${store.latitude}, ${store.longitude})">
+                                            <i class="fas fa-directions me-2"></i> Directions
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="price-availability">
+                                    <div class="price">
+                                        ₹${store.price ? store.price.toFixed(2) : 'N/A'}
+                                    </div>
+                                    <div class="availability ${availabilityClass}">
+                                        <i class="fas ${store.availability ? 'fa-check-circle' : 'fa-times-circle'} me-1"></i>
+                                        ${availabilityText}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    resultsContainerEl.innerHTML += resultHtml;
+                });
+            } else {
+                // Display no results message
+                resultsContainerEl.innerHTML = `
+                    <div class="no-results animate__animated animate__fadeIn">
+                        <div class="no-results-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>No Pharmacies Found</h3>
+                        <p>We couldn't find any pharmacies matching your search criteria.</p>
+                        <a href="search.html" class="btn btn-primary btn-action">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Search
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Function to show directions
+        function showDirections(storeName, latitude, longitude) {
+            // Create Google Maps URL with the store's coordinates
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+            // Open in a new tab
+            window.open(googleMapsUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
