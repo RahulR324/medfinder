@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -19,11 +20,15 @@ const connectDB = async () => {
     try {
         console.log('Starting connection process...');
         
-        // Connection details
-        const username = 'rahulratheeshp';
-        const password = 'medfinder';
-        const cluster = 'medfinder.0selh.mongodb.net';
-        const database = 'medfinder';
+        // Connection details from environment variables
+        const username = process.env.MONGO_USERNAME;
+        const password = process.env.MONGO_PASSWORD;
+        const cluster = process.env.MONGO_CLUSTER;
+        const database = process.env.MONGO_DATABASE;
+
+        if (!username || !password || !cluster || !database) {
+            throw new Error('Missing required MongoDB environment variables. Check your .env file.');
+        }
         
         // Build connection string
         const uri = `mongodb+srv://${username}:${password}@${cluster}/${database}?tls=true&authSource=admin`;
@@ -32,7 +37,6 @@ const connectDB = async () => {
         console.log('Cluster:', cluster);
         console.log('Database:', database);
         
-        // Connection options
         const options = {
             serverSelectionTimeoutMS: 15000,
             tls: true,
